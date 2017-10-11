@@ -38,18 +38,21 @@ void do_move(double distance);
 void do_spin(double spin_ang);
 
 //signum function: strip off and return the sign of the argument
-double sgn(double x) { if (x>0.0) {return 1.0; }
+double sgn(double x) { 
+    if (x>0.0) {return 1.0;}
     else if (x<0.0) {return -1.0;}
     else {return 0.0;}
 }
 
 //a function to consider periodicity and find min delta angle
 double min_spin(double spin_angle) {
-        if (spin_angle>M_PI) {
-            spin_angle -= 2.0*M_PI;}
-        if (spin_angle< -M_PI) {
-            spin_angle += 2.0*M_PI;}
-         return spin_angle;   
+    if (spin_angle > M_PI) {
+        spin_angle -= 2.0*M_PI;
+    }
+    if (spin_angle < -M_PI) {
+        spin_angle += 2.0*M_PI;
+    }
+    return spin_angle;   
 }            
 
 // a useful conversion function: from quaternion to yaw
@@ -74,12 +77,12 @@ geometry_msgs::Quaternion convertPlanarPhi2Quaternion(double phi) {
 //a function to reorient by a specified angle (in radians), then halt
 void do_spin(double spin_ang) {
     ros::Rate loop_timer(1/g_sample_dt);
-    double timer=0.0;
+    double timer = 0.0;
     double final_time = fabs(spin_ang)/g_spin_speed;
-    g_twist_cmd.angular.z= sgn(spin_ang)*g_spin_speed;
-    while(timer<final_time) {
+    g_twist_cmd.angular.z = sgn(spin_ang)*g_spin_speed;
+    while(timer < final_time) {
           g_twist_commander.publish(g_twist_cmd);
-          timer+=g_sample_dt;
+          timer += g_sample_dt;
           loop_timer.sleep(); 
     }  
     do_halt(); 
@@ -93,9 +96,9 @@ void do_move(double distance) { // always assumes robot is already oriented prop
     double final_time = fabs(distance)/g_move_speed;
     g_twist_cmd.angular.z = 0.0; //stop spinning
     g_twist_cmd.linear.x = sgn(distance)*g_move_speed;
-    while(timer<final_time) {
+    while(timer < final_time) {
           g_twist_commander.publish(g_twist_cmd);
-          timer+=g_sample_dt;
+          timer += g_sample_dt;
           loop_timer.sleep(); 
     }  
     do_halt();
@@ -103,17 +106,16 @@ void do_move(double distance) { // always assumes robot is already oriented prop
 
 void do_halt() {
     ros::Rate loop_timer(1/g_sample_dt);   
-    g_twist_cmd.angular.z= 0.0;
-    g_twist_cmd.linear.x=0.0;
-    for (int i=0;i<10;i++) {
+    g_twist_cmd.angular.z = 0.0;
+    g_twist_cmd.linear.x = 0.0;
+    for (int i = 0; i < 10; i++) {
         g_twist_commander.publish(g_twist_cmd);
         loop_timer.sleep(); 
     }   
 }
 
 
-bool callback(my_ros_service::MyPathSrvRequest& request, my_ros_service::MyPathSrvResponse& response)
-{
+bool callback(my_ros_service::MyPathSrvRequest& request, my_ros_service::MyPathSrvResponse& response) {
     ROS_INFO("callback activated");
     double yaw_desired, yaw_current, spin_angle;
     //double px_desired, py_desired, pz_desired, px_current, py_current, pz_current; 
@@ -154,17 +156,17 @@ bool callback(my_ros_service::MyPathSrvRequest& request, my_ros_service::MyPathS
         g_current_pose.position = pose_desired.position; // assumes got to desired orientation precisely
     }
 
-  return true;
+    return true;
 }
 
 void do_inits(ros::NodeHandle &n) {
-  //initialize components of the twist command global variable
-    g_twist_cmd.linear.x=0.0;
-    g_twist_cmd.linear.y=0.0;    
-    g_twist_cmd.linear.z=0.0;
-    g_twist_cmd.angular.x=0.0;
-    g_twist_cmd.angular.y=0.0;
-    g_twist_cmd.angular.z=0.0;  
+    //initialize components of the twist command global variable
+    g_twist_cmd.linear.x = 0.0;
+    g_twist_cmd.linear.y = 0.0;    
+    g_twist_cmd.linear.z = 0.0;
+    g_twist_cmd.angular.x = 0.0;
+    g_twist_cmd.angular.y =0.0;
+    g_twist_cmd.angular.z = 0.0;  
     
     //define initial position to be 0
     g_current_pose.position.x = 0.0;
@@ -181,19 +183,18 @@ void do_inits(ros::NodeHandle &n) {
     g_twist_commander = n.advertise<geometry_msgs::Twist>("/robot0/cmd_vel", 1);    
 }
 
-int main(int argc, char **argv)
-{
-  ros::init(argc, argv, "my_path_service");
-  ros::NodeHandle n;
-  
-  // to clean up "main", do initializations in a separate function
-  // a poor-man's class constructor
-  do_inits(n); //pass in a node handle so this function can set up publisher with it
-  
-  // establish a service to receive path commands
-  ros::ServiceServer service = n.advertiseService("my_path_service", callback);
-  ROS_INFO("Ready to accept paths.");
-  ros::spin(); //callbacks do all the work now
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "my_path_service");
+    ros::NodeHandle n;
 
-  return 0;
+    // to clean up "main", do initializations in a separate function
+    // a poor-man's class constructor
+    do_inits(n); //pass in a node handle so this function can set up publisher with it
+
+    // establish a service to receive path commands
+    ros::ServiceServer service = n.advertiseService("my_path_service", callback);
+    ROS_INFO("Ready to accept paths.");
+    ros::spin(); //callbacks do all the work now
+
+    return 0;
 }
