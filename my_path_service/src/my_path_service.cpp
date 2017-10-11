@@ -8,7 +8,7 @@
 // i.e., equivalent to expressing subgoals in odom frame
 
 #include <ros/ros.h>
-#include <my_ros_service/MyPathSrv.h>
+#include <my_path_service/MyPathSrv.h>
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
@@ -115,7 +115,7 @@ void do_halt() {
 }
 
 
-bool callback(my_ros_service::MyPathSrvRequest& request, my_ros_service::MyPathSrvResponse& response) {
+bool callback(my_path_service::MyPathSrvRequest& request, my_path_service::MyPathSrvResponse& response) {
     ROS_INFO("callback activated");
     double yaw_desired, yaw_current, spin_angle;
     //double px_desired, py_desired, pz_desired, px_current, py_current, pz_current; 

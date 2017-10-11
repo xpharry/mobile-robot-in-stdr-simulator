@@ -2,7 +2,7 @@
 // illustrates how to send a request to the path_service service
 
 #include <ros/ros.h>
-#include <my_ros_service/MyPathSrv.h> // this message type is defined in the current package
+#include <my_path_service/MyPathSrv.h> // this message type is defined in the current package
 #include <iostream>
 #include <string>
 #include <nav_msgs/Path.h>
@@ -24,7 +24,7 @@ geometry_msgs::Quaternion convertPlanarPhi2Quaternion(double phi) {
 int main(int argc, char **argv) {
     ros::init(argc, argv, "my_path_client");
     ros::NodeHandle n;
-    ros::ServiceClient client = n.serviceClient<my_ros_service::MyPathSrv>("my_path_service");
+    ros::ServiceClient client = n.serviceClient<my_path_service::MyPathSrv>("my_path_service");
     geometry_msgs::Quaternion quat;
     
     while (!client.exists()) {
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
       ros::Duration(1.0).sleep();
     }
     ROS_INFO("connected client to service");
-    my_ros_service::MyPathSrv path_srv;
+    my_path_service::MyPathSrv path_srv;
     
     //create some path points...this should be done by some intelligent algorithm, but we'll hard-code it here
     geometry_msgs::PoseStamped pose_stamped;
