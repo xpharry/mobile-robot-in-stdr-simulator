@@ -48,7 +48,7 @@ rosrun my_stdr_control my_reactive_commander
 ```
 roslaunch stdr_launchers server_with_map_and_gui_plus_robot.launch
 
-rosrun my_ros_service my_path_service2
+rosrun my_ros_service my_path_service
 
 rosrun my_ros_service my_path_client
 ```
